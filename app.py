@@ -13,12 +13,15 @@ import platform
 st.title('Generación Aumentada por Recuperación (RAG) 💬')
 st.write("Versión de Python:", platform.python_version())
 
-# Load and display image
-try:
-    image = Image.open('Chat_pdf.png')
-    st.image(image, width=350)
-except Exception as e:
-    st.warning(f"No se pudo cargar la imagen: {e}")
+# Subida de imagen
+uploaded_image = st.file_uploader("Sube una imagen", type=["jpg", "jpeg", "png"])
+
+if uploaded_image is not None:
+    try:
+        image = Image.open(uploaded_image)
+        st.image(image, width=350, caption="Imagen subida")
+    except Exception as e:
+        st.warning(f"No se pudo mostrar la imagen: {e}")
 
 # Sidebar information
 with st.sidebar:
@@ -67,8 +70,7 @@ if pdf is not None and ke:
         if user_question:
             docs = knowledge_base.similarity_search(user_question)
             
-            # Use a current model instead of deprecated text-davinci-003
-            # Options: "gpt-3.5-turbo-instruct" or "gpt-4-turbo-preview" depending on your API access
+            # Use a current model
             llm = OpenAI(temperature=0, model_name="gpt-4o")
             
             # Load QA chain
@@ -90,3 +92,4 @@ elif pdf is not None and not ke:
     st.warning("Por favor ingresa tu clave de API de OpenAI para continuar")
 else:
     st.info("Por favor carga un archivo PDF para comenzar")
+
